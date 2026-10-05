@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <!-- Thème appliqué avant le rendu, pour éviter un flash clair en mode sombre. -->
+  <script>try{var t=localStorage.getItem('mochikao-theme')}catch(e){}document.documentElement.dataset.theme=t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n-doc-title="meta.editorTitle">Éditeur — mochikao</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./editor.ts"></script>
+</head>
+<body class="editor-page">
+  <header class="nav">
+    <a class="brand" href="./" data-i18n-aria="nav.homeAria">
+      <mochikao-avatar name="mochikao" size="34" animate="always"></mochikao-avatar>
+      <span>mochikao</span>
+    </a>
+    <nav>
+      <a href="./" data-i18n="nav.home">Accueil</a>
+      <a href="./#galerie" data-i18n="nav.gallery">Galerie</a>
+      <a href="./#code" data-i18n="nav.code">Code</a>
+    </nav>
+    <div class="prefs" id="prefs"></div>
+  </header>
+
+  <main class="ed">
+    <section class="ed-main">
+      <div class="ed-name">
+        <label for="name" data-i18n="editor.name">Nom</label>
+        <input id="name" autocomplete="off" spellcheck="false" maxlength="80">
+        <button type="button" class="icon-btn" id="random" data-i18n-aria="editor.random" data-i18n-title="editor.random">
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M1 4h3l6 8h4M1 12h3l6-8h4M12 2l2 2-2 2M12 10l2 2-2 2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+
+      <div class="ed-stage" id="preview"></div>
+
+      <p class="ed-caption" data-i18n="editor.others">autres noms, mêmes réglages</p>
+      <div class="ed-others" id="others"></div>
+
+      <div class="ed-rows">
+        <div class="ed-row"><span data-i18n="editor.expression">Expression</span><div class="chips" id="expressions" role="radiogroup"></div></div>
+        <div class="ed-row"><span data-i18n="editor.motion">Animation</span><div class="seg" id="animate" role="radiogroup"></div></div>
+        <div class="ed-row"><span data-i18n="editor.background">Fond</span><div class="seg" id="background" role="radiogroup"></div></div>
+      </div>
+
+      <div class="snippet card">
+        <div class="tabs" role="tablist" id="tabs"></div>
+        <pre><code id="snippet"></code></pre>
+      </div>
+      <p class="ed-note" id="note"></p>
+
+      <div class="ed-actions">
+        <button type="button" class="btn" id="dl-svg" data-i18n="action.downloadSvg">Télécharger SVG</button>
+        <button type="button" class="btn ghost" id="dl-png" data-i18n="action.downloadPng">PNG 512</button>
+        <button type="button" class="btn ghost" id="share" data-i18n="action.share">Copier le lien</button>
+      </div>
+      <button type="button" class="install" id="install"><span>$</span> <code>npm i mochikao</code></button>
+    </section>
+
+    <aside class="ed-panel card" id="panel">
+      <div class="panel-head">
+        <span id="pin-count"></span>
+        <button type="button" class="link-btn" id="unpin" data-i18n="editor.unpinAll">Tout désépingler</button>
+      </div>
+      <div id="panel-body"></div>
+    </aside>
+  </main>
+</body>
+</html>

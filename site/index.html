@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <!-- Thème appliqué avant le rendu, pour éviter un flash clair en mode sombre. -->
+  <script>try{var t=localStorage.getItem('mochikao-theme')}catch(e){}document.documentElement.dataset.theme=t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n-doc-title="meta.title">mochikao — un visage pour chaque nom</title>
+  <meta name="description" content="Avatars-blobs déterministes : n'importe quelle chaîne devient un petit personnage SVG unique. Zéro dépendance.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./main.ts"></script>
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="#top" data-i18n-aria="nav.homeAria">
+      <mochikao-avatar name="mochikao" size="34" animate="always"></mochikao-avatar>
+      <span>mochikao</span>
+    </a>
+    <nav>
+      <a href="./editor.html" data-i18n="nav.editor">Éditeur</a>
+      <a href="#galerie" data-i18n="nav.gallery">Galerie</a>
+      <a href="#code" data-i18n="nav.code">Code</a>
+    </nav>
+    <div class="prefs" id="prefs"></div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow" data-i18n="hero.eyebrow">avatars déterministes · zéro dépendance · ~7 Ko</p>
+        <h1 data-i18n-html="hero.title">Un visage pour<br>chaque nom.</h1>
+        <p class="lede" data-i18n-html="hero.lede"></p>
+        <label class="name-field">
+          <span data-i18n="hero.nameLabel">Tape un nom</span>
+          <input id="name" value="alex" autocomplete="off" spellcheck="false" maxlength="80">
+        </label>
+        <div class="moods" id="moods" role="radiogroup" data-i18n-aria="hero.moods"></div>
+      </div>
+      <div class="hero-stage">
+        <div class="halo" aria-hidden="true"></div>
+        <mochikao-avatar id="hero" size="340" animate="always" gaze></mochikao-avatar>
+        <p class="traits" id="traits"></p>
+      </div>
+    </section>
+
+    <section class="sizes" data-i18n-aria="sizes.aria">
+      <div class="sizes-row" id="sizes"></div>
+      <p data-i18n-html="sizes.text"></p>
+    </section>
+
+    <section class="block">
+      <div class="block-head">
+        <h2 data-i18n="families.title">Trois familles</h2>
+        <p data-i18n="families.text"></p>
+      </div>
+      <div class="families" id="families"></div>
+    </section>
+
+    <section class="block">
+      <a class="cta card" href="./editor.html" id="cta">
+        <div class="cta-avatars" id="cta-avatars" aria-hidden="true"></div>
+        <div>
+          <h2 data-i18n="cta.title">L'éditeur</h2>
+          <p data-i18n="cta.text"></p>
+          <span class="btn" data-i18n="cta.button">Ouvrir l'éditeur</span>
+        </div>
+      </a>
+    </section>
+
+    <section id="galerie" class="block">
+      <div class="block-head">
+        <h2 data-i18n="gallery.title">Galerie</h2>
+        <p data-i18n="gallery.text"></p>
+        <button type="button" class="btn ghost" id="shuffle" data-i18n="gallery.shuffle">Mélanger</button>
+      </div>
+      <div class="gallery" id="gallery"></div>
+    </section>
+
+    <section id="code" class="block">
+      <div class="block-head">
+        <h2 data-i18n="code.title">Dans ton code</h2>
+        <p data-i18n="code.text"></p>
+      </div>
+      <div class="usage">
+        <article class="card">
+          <h3 data-i18n="code.components">React · Vue · Svelte · Solid</h3>
+          <p data-i18n="code.componentsText"></p>
+<pre><code>import { Mochikao } from 'mochikao/react';
+import { Mochikao } from 'mochikao/vue';
+import Mochikao from 'mochikao/svelte';
+import { Mochikao } from 'mochikao/solid';
+
+&lt;Mochikao name="alex" animate="hover" /&gt;</code></pre>
+        </article>
+        <article class="card">
+          <h3 data-i18n="code.function">Fonction</h3>
+          <p data-i18n="code.functionText"></p>
+<pre><code>import { mochikao } from 'mochikao';
+
+const svg = mochikao({
+  name: 'alex@mail.com',
+  family: 'animals',
+  background: 'squircle',
+});</code></pre>
+        </article>
+        <article class="card">
+          <h3 data-i18n="code.element">Web component</h3>
+          <p data-i18n-html="code.elementText"></p>
+<pre><code>import { defineMochikao } from 'mochikao/element';
+defineMochikao();
+
+&lt;mochikao-avatar name="alex"
+  animate="hover" gaze&gt;
+&lt;/mochikao-avatar&gt;</code></pre>
+        </article>
+        <article class="card">
+          <h3 data-i18n="code.http">HTTP &amp; CLI</h3>
+          <p data-i18n="code.httpText"></p>
+<pre><code>&lt;img src="/api/alex.svg?family=produce"&gt;
+
+npx mochikao alex --bg circle -o alex.svg
+npx mochikao alex --info</code></pre>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p data-i18n-html="footer.text"></p>
+  </footer>
+</body>
+</html>
