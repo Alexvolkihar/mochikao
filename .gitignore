@@ -1,0 +1,12 @@
+node_modules
+dist
+dist-site
+.DS_Store
+test/.out
+
+# Secrets : ne jamais commiter de jeton
+.env
+.env.*
+.npmrc
+*.pem
+*.key
