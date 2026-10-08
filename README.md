@@ -1,73 +1,75 @@
 # mochikao
 
-Un visage pour chaque nom. `mochikao` transforme n'importe quelle chaîne (pseudo, e-mail, id) en un petit personnage SVG. Le même nom donne toujours le même mochikao.
+**English** · [Français](README.fr.md)
 
-![Page d'accueil de mochikao : un nom tapé, l'avatar généré et le choix d'expression](docs/accueil.png)
+A face for every name. `mochikao` turns any string (username, email, ID) into a little SVG character. The same name always gives the same mochikao.
 
-![Éditeur de mochikao en thème sombre : aperçu, autres noms avec les mêmes réglages, panneau de réglages à épingler](docs/editeur.png)
+![mochikao home page: a typed name, the generated avatar and the expression picker](docs/home.png)
 
-- **Déterministe** : `cyrb53` → `mulberry32`, aucun appel réseau, aucun état.
-- **Zéro dépendance**, ~7 Ko min+gzip.
-- **10 formes de blobs**, et deux familles optionnelles importées à part : 6 animaux (`mochikao/animals`, +1,1 Ko) et 6 fruits & légumes (`mochikao/produce`, +1,5 Ko, avec leur teinte naturelle).
-- 5 yeux, 6 bouches, 11 accessoires (joues, taches, antenne, pousse, reflet, lunettes, lunettes noires, nœud, couronne, chapeau de fête).
-- **10 axes continus** réglables (taille et proportion du corps, carrure, ondulation, taille/écart/inclinaison des yeux, regard x/y, taille de la bouche) et 6 préréglages de couleur.
-- **8 expressions** : `idle`, `happy`, `sad`, `mad`, `love`, `shy`, `sick`, `thinking`.
-- **Contraste visage/corps ≥ 4.5:1** pour toute teinte et tout ton (vérifié par les tests).
-- **Animations CSS** (respiration, clignement, coups d'œil), **transition animée entre expressions** et **regard qui suit le pointeur**.
-- Fonction, composants **React / Vue / Svelte / Solid**, web component, API HTTP et CLI.
+![mochikao editor in dark mode: a bunny, other names with the same settings, the panel of pinnable settings](docs/editor.png)
 
-Inspiré de [blobatar](https://blobatar.dev).
+- **Deterministic**: `cyrb53` → `mulberry32`, no network calls, no state.
+- **Zero dependencies**, ~7 KB min+gzip.
+- **10 blob shapes**, plus two optional families imported separately: 6 animals (`mochikao/animals`, +1.1 KB) and 6 fruits & veggies (`mochikao/produce`, +1.5 KB, each with its natural color).
+- 5 eyes, 6 mouths, 11 accessories (blush, freckles, antenna, sprout, shine, glasses, sunglasses, bow, crown, party hat).
+- **10 continuous axes** you can tune (body size and proportion, squareness, wobble, eye size/spacing/lean, gaze x/y, mouth size) and 6 color presets.
+- **8 expressions**: `idle`, `happy`, `sad`, `mad`, `love`, `shy`, `sick`, `thinking`.
+- **Face-to-body contrast ≥ 4.5:1** for every hue and tone (checked by the tests).
+- **CSS animations** (breathing, blinking, glances), **animated transitions between expressions** and **eyes that follow the pointer**.
+- A function, **React / Vue / Svelte / Solid** components, a web component, an HTTP API and a CLI.
 
-## Démarrer
+Inspired by [blobatar](https://blobatar.dev).
+
+## Getting started
 
 ```bash
 npm install
-npm run dev        # site (accueil + /editor.html) sur http://localhost:5173, API /api/*.svg branchée
-npm test           # tests node:test
-npm run api        # API seule sur :8787
-npm run build      # lib + CLI dans dist/
-npm run build:site # site statique dans dist-site/
+npm run dev        # site (home + /editor.html) on http://localhost:5173, with the /api/*.svg API
+npm test           # node:test tests
+npm run api        # API alone on :8787
+npm run build      # library + CLI into dist/
+npm run build:site # static site into dist-site/
 ```
 
-Pour développer, Node ≥ 22.18 : les sources `.ts` s'exécutent directement (type stripping). Le paquet publié, lui, est du JavaScript ES2022 (ESM) : Node ≥ 20 et tous les bundlers. Les tests utilisent la condition d'export `mochikao-source` pour importer le package depuis ses sources, sans build préalable.
+Development needs Node ≥ 22.18: the `.ts` sources run directly (type stripping). The published package is plain ES2022 JavaScript (ESM): Node ≥ 20 and every bundler. The tests use the `mochikao-source` export condition to import the package from its sources, with no build step.
 
-## Utilisation
+## Usage
 
-### Fonction
+### Function
 
 ```ts
 import { mochikao, resolve } from 'mochikao';
 
 const svg = mochikao({ name: 'alex@mail.com', size: 64, background: 'squircle' });
-resolve('alex'); // { shape: 'boxy', eyes: 'dot', mouth: 'cat', extra: 'none', hue: 348, colors: {...} }
+resolve('alex'); // { shape: 'boxy', eyes: 'dot', mouth: 'cat', extra: 'blush', hue: 348, colors: {...} }
 ```
 
-| Option | Valeurs | Défaut |
+| Option | Values | Default |
 | --- | --- | --- |
-| `name` | toute chaîne (insensible à la casse et aux espaces autour) | — |
+| `name` | any string (case-insensitive, surrounding spaces ignored) | — |
 | `size` | px | `128` |
 | `background` | `none` `circle` `squircle` `square` | `none` |
-| `hue` | 0–360 | tirée du nom |
-| `tone` | 0 (sombre) – 1 (clair) | `0.5` |
+| `hue` | 0–360 | from the name |
+| `tone` | 0 (dark) – 1 (light) | `0.5` |
 | `saturation` | 0–1 | `0.74` |
-| `color` | préréglage ton + saturation : `pastel` `pale` `mid` `deep` `bright` `ink` | — |
-| `family` | une famille importée : `animals`, `produce` (voir plus bas) | blobs |
+| `color` | tone + saturation preset: `pastel` `pale` `mid` `deep` `bright` `ink` | — |
+| `family` | an imported family: `animals`, `produce` (see below) | blobs |
 | `expression` | `idle` `happy` `sad` `mad` `love` `shy` `sick` `thinking` | `idle` |
 | `animate` | `none` `hover` `always` | `none` |
-| `shape` `eyes` `mouth` `extra` | épingle un trait par son nom (`shape` parmi les formes de la famille) | tirés du nom |
-| `traits` | épingle des axes 0–1 : `bodySize` `proportion` `squareness` `wobble` `eyeSize` `spacing` `lean` `gazeX` `gazeY` `mouthSize` | tirés du nom |
-| `gaze` | ajoute le CSS de suivi du regard (`--gx`, `--gy`) | `false` |
+| `shape` `eyes` `mouth` `extra` | pin a trait by name (`shape` among the family's shapes) | from the name |
+| `traits` | pin 0–1 axes: `bodySize` `proportion` `squareness` `wobble` `eyeSize` `spacing` `lean` `gazeX` `gazeY` `mouthSize` | from the name |
+| `gaze` | adds the CSS for pointer tracking (`--gx`, `--gy`) | `false` |
 
-`toParams(options)` (depuis `mochikao/params`) donne les mêmes options en paramètres d'URL, et `parseParams` fait l'inverse : c'est ce qu'utilisent l'API, la CLI, le web component et les liens de l'éditeur.
+`toParams(options)` (from `mochikao/params`) turns the same options into URL parameters, and `parseParams` does the reverse: that is what the API, the CLI, the web component and the editor links use.
 
-`mochikaoDataUri(options)` renvoie la même image en data URI, encodée au plus court pour un attribut HTML. `mochikaoImage(options)` renvoie directement `{ src, width, height, alt }`.
+`mochikaoDataUri(options)` returns the same image as a data URI, encoded as compactly as possible for an HTML attribute. `mochikaoImage(options)` returns `{ src, width, height, alt }` directly.
 
-Épingler un axe ne change pas les autres : on peut forcer la forme sans perdre la couleur ni le visage.
+Pinning one axis leaves the others alone: you can force the shape without losing the color or the face.
 
 ### React, Vue, Svelte, Solid
 
 ```tsx
-import { Mochikao } from 'mochikao/react';      // React 18+ (et Preact via preact/compat)
+import { Mochikao } from 'mochikao/react';      // React 18+ (and Preact via preact/compat)
 <Mochikao name="alex" size={48} animate="hover" className="avatar" />
 ```
 
@@ -92,34 +94,34 @@ import { Mochikao } from 'mochikao/solid';      // Solid 1.8+
 <Mochikao name="alex" size={48} animate="hover" class="avatar" />
 ```
 
-Mêmes props que les options de `mochikao()` (sauf `gaze`), plus `inline`. Les autres attributs (`class`, `style`, événements...) sont transmis à l'élément rendu. Le composant React n'utilise aucun hook et fonctionne donc en Server Component. Les frameworks sont des `peerDependencies` optionnelles : seul celui que tu importes est requis.
+Same props as the `mochikao()` options (except `gaze`), plus `inline`. Other attributes (`class`, `style`, event handlers…) are passed to the rendered element. The React component is a client component (`'use client'`, for the expression transition): it still renders on the server and can be used from Server Components. The frameworks are optional `peerDependencies`: only the one you import is required.
 
-**`<img>` ou SVG en ligne ?** Sans animation, les composants rendent un simple `<img src="data:image/svg+xml,...">` : 1 nœud DOM au lieu d'une vingtaine (18 à 27 selon l'avatar), ce qui compte dans les longues listes. Avec `animate="hover"` ou `"always"`, ils rendent le SVG en ligne, nécessaire pour que l'animation fonctionne. `inline` force le SVG en ligne, par exemple pour le styler en CSS. Le web component suit la même règle, et passe aussi en SVG en ligne avec `gaze`.
+**`<img>` or inline SVG?** Without animation, the components render a plain `<img src="data:image/svg+xml,...">`: 1 DOM node instead of about twenty (18 to 27 depending on the avatar), which matters in long lists. With `animate="hover"` or `"always"`, they render inline SVG, which the animation needs. `inline` forces inline SVG, for example to style it with CSS. The web component follows the same rule, and also switches to inline SVG with `gaze`.
 
-Le composant Svelte est livré en `.svelte` source, compilé par ton bundler (condition d'export `svelte`). Le composant Solid est écrit sans JSX : pas besoin du plugin Babel de Solid pour le consommer, et toutes les props restent réactives.
+The Svelte component ships as a `.svelte` source file, compiled by your bundler (`svelte` export condition). The Solid component is written without JSX: no Solid Babel plugin needed to consume it, and every prop stays reactive.
 
-### Familles de formes
+### Shape families
 
-mochikao n'embarque que les blobs. Les autres familles sont des modules à importer et à passer en option, pour que seuls ceux qui s'en servent en paient le poids :
+mochikao only bundles the blobs. The other families are modules you import and pass as an option, so only the people who use them pay for their size:
 
 ```ts
 import { mochikao } from 'mochikao';
-import { animals } from 'mochikao/animals';   // chat, ours, lapin, grenouille, cochon, souris
-import { produce } from 'mochikao/produce';   // pomme, poire, fraise, citron, carotte, avocat
+import { animals } from 'mochikao/animals';   // cat, bear, bunny, frog, pig, mouse
+import { produce } from 'mochikao/produce';   // apple, pear, strawberry, lemon, carrot, avocado
 
 mochikao({ name: 'alex', family: animals });
 mochikao({ name: 'alex', family: produce, shape: 'lemon' });
 ```
 
-Choisir une famille ne change que la forme : yeux, bouche, accessoire et réglages restent ceux du nom. Là où les options arrivent en texte (attributs HTML, URL, CLI), on déclare les familles disponibles une fois : `defineMochikao({ families: [animals] })` puis `<mochikao-avatar family="animals">`, ou `parseParams(nom, params, [animals, produce])`. L'API et la CLI fournies acceptent les deux.
+Picking a family only changes the shape: eyes, mouth, accessory and settings still come from the name. Where options arrive as text (HTML attributes, URLs, CLI), declare the available families once: `defineMochikao({ families: [animals] })` then `<mochikao-avatar family="animals">`, or `parseParams(name, params, [animals, produce])`. The bundled API and CLI accept both.
 
-Une famille, c'est un objet `ShapeFamily` (`name`, `shapes`, `silhouette`, et en option `decorate` et `hue`) : `src/families/` montre comment en écrire une.
+A family is a `ShapeFamily` object (`name`, `shapes`, `silhouette`, and optionally `decorate` and `hue`): `src/families/` shows how to write one.
 
-### Transition entre expressions
+### Transitions between expressions
 
-En SVG en ligne (`animate`, `inline` ou `gaze`), changer `expression` déclenche une petite transition : les yeux clignent, la bouche se referme, le visage change pendant qu'ils sont fermés, puis tout se rouvre avec un rebond (~450 ms). Les composants et le web component le font tout seuls. Un `<img>` ne peut pas s'animer : en mode image, le changement est immédiat.
+With inline SVG (`animate`, `inline` or `gaze`), changing `expression` plays a short transition: the eyes blink, the mouth closes, the face changes while they are shut, then everything reopens with a little bounce (~450 ms). The components and the web component do it on their own. An `<img>` cannot animate: in image mode the change is immediate.
 
-Pour ton propre rendu, `morphTo(element, svg)` (depuis `mochikao/morph`) remplace le SVG contenu dans `element` avec la transition. Elle ne s'applique qu'entre deux expressions du même personnage (attribut `data-mochikao` identique) ; sinon, ou si `prefers-reduced-motion` est actif, le remplacement est direct. Un appel pendant une transition repart de l'état affiché, sans étape intermédiaire.
+For your own rendering, `morphTo(element, svg)` (from `mochikao/morph`) replaces the SVG inside `element` with the transition. It only applies between two expressions of the same character (same `data-mochikao` attribute); otherwise, or when `prefers-reduced-motion` is on, the replacement is instant. A call during a transition starts again from what is on screen, with no intermediate step.
 
 ### Web component
 
@@ -132,83 +134,83 @@ Pour ton propre rendu, `morphTo(element, svg)` (depuis `mochikao/morph`) remplac
 <mochikao-avatar name="alex" animate="hover" background="circle" gaze></mochikao-avatar>
 ```
 
-Mêmes attributs que les options ; `gaze` fait suivre le pointeur aux yeux.
+Same attributes as the options; `gaze` makes the eyes follow the pointer.
 
-### API HTTP
+### HTTP API
 
 ```
-GET /api/<nom>.svg?size=&bg=&hue=&tone=&expression=&animate=&shape=&eyes=&mouth=&extra=
+GET /api/<name>.svg?size=&bg=&hue=&tone=&color=&expression=&animate=&family=&shape=&eyes=&mouth=&extra=
 ```
 
-Réponse `image/svg+xml` avec `Cache-Control: immutable` (même entrée → même sortie). Les paramètres invalides sont ignorés. Le handler (`api/handler.ts`) est une simple fonction `(req, res)` de `node:http`, à brancher où tu veux.
+Responds with `image/svg+xml` and `Cache-Control: immutable` (same input → same output). Invalid parameters are ignored. The handler (`api/handler.ts`) is a plain `node:http` `(req, res)` function you can mount anywhere.
 
 ### CLI
 
 ```bash
 npx mochikao alex --bg circle --expression happy -o alex.svg
-npx mochikao alex --info   # traits et couleurs en JSON
+npx mochikao alex --info   # traits and colors as JSON
 ```
 
 ## Site
 
-- **Accueil** : nom à taper, expressions, familles, galerie, exemples de code.
-- **Éditeur** (`/editor.html`) : épingle chaque trait (grilles avec aperçus, curseurs avec cadenas), vois le résultat sur d'autres noms, récupère le code (React, Vue, Svelte, Solid, HTML, JS, URL), télécharge en SVG/PNG. L'URL de la page reflète la config : copier le lien suffit pour la partager.
-- **Thème** clair / sombre / système (mémorisé, sans flash au chargement) et **langues** français, anglais, espagnol, japonais (`?lang=en`, sinon la langue du navigateur).
+- **Home**: type a name, try expressions, browse the families and the gallery, copy code examples.
+- **Editor** (`/editor.html`): pin each trait (grids with previews, sliders with locks), see the result on other names, get the code (React, Vue, Svelte, Solid, HTML, JS, URL), download as SVG/PNG. The page URL holds the config: copying the link is enough to share it.
+- **Light / dark / system theme** (remembered, no flash on load) and **languages**: English, French, Spanish, Japanese (`?lang=en`, otherwise the browser language).
 
-## Stabilité
+## Stability
 
-La constante `GENERATION` (`src/traits.ts`) et l'ordre des tirages font partie de la graine. Les changer modifie **tous** les avatars, donc toutes les URL déjà publiées. Le test « les traits de "alex" ne bougent pas » sert de garde-fou.
+The `GENERATION` constant (`src/traits.ts`) and the order of the random draws are part of the seed. Changing them changes **every** avatar, and so every URL already in use. The "alex's traits do not move" test guards against that.
 
-## Structure
+## Project structure
 
 ```
 src/
-  random.ts   hachage cyrb53 + PRNG mulberry32
-  traits.ts   axes, listes de traits, dérivation depuis le nom
-  shape.ts    silhouettes (fonctions polaires → Catmull-Rom → Bézier)
-  color.ts    palette HSL avec contraste garanti
-  face.ts     yeux, bouches, sourcils, accessoires, expressions
-  index.ts    rendu SVG + animations
-  params.ts   options depuis query string / attributs / flags
-  family.ts   contrat d'une famille de formes (ShapeFamily)
-  families/   animals.ts, produce.ts (modules à part) et kit.ts (outils communs)
-  morph.ts    transition animée entre expressions (Web Animations)
+  random.ts   cyrb53 hash + mulberry32 PRNG
+  traits.ts   axes, trait lists, derivation from the name
+  shape.ts    silhouettes (polar functions → Catmull-Rom → Bézier)
+  color.ts    HSL palette with guaranteed contrast
+  face.ts     eyes, mouths, brows, accessories, expressions
+  index.ts    SVG rendering + animations
+  params.ts   options from query strings / attributes / flags
+  family.ts   shape family contract (ShapeFamily)
+  families/   animals.ts, produce.ts (separate modules) and kit.ts (shared helpers)
+  morph.ts    animated transitions between expressions (Web Animations)
   element.ts  <mochikao-avatar>
-  react.ts    composant React
-  vue.ts      composant Vue
-  solid.ts    composant Solid
-  svelte/     composant Svelte (livré en source)
-api/          handler HTTP + serveur Node
+  react.ts    React component
+  vue.ts      Vue component
+  solid.ts    Solid component
+  svelte/     Svelte component (shipped as source)
+api/          HTTP handler + Node server
 bin/          CLI
-site/         accueil + éditeur (Vite) ; site/shared : thème clair/sombre, traductions fr/en/es/ja
+site/         home + editor (Vite); site/shared: light/dark theme, en/fr/es/ja translations
 test/         node:test
 ```
 
-## Publier
+## Publishing
 
-Un seul paquet, `mochikao`, sert npm, pnpm, yarn et bun : ils installent tous depuis le registre npm. Les intégrations sont des sous-chemins (`mochikao/react`, `mochikao/animals`...), et React, Vue, Svelte et Solid sont des `peerDependencies` optionnelles.
+A single package, `mochikao`, serves npm, pnpm, yarn and bun: they all install from the npm registry. The integrations are subpaths (`mochikao/react`, `mochikao/animals`…), and React, Vue, Svelte and Solid are optional `peerDependencies`.
 
-**Première version, à la main** (le paquet doit exister avant d'activer la publication automatique) :
+**First release, by hand** (the package has to exist before automated publishing can be turned on):
 
 ```bash
-npm pack --dry-run      # liste exacte des fichiers envoyés
+npm pack --dry-run      # exact list of the files that will be published
 npm login
-npm publish             # prepublishOnly lance types, tests et build avant
+npm publish             # prepublishOnly runs types, tests and build first
 ```
 
-**Versions suivantes, par la CI** (`.github/workflows/release.yml`, Trusted Publishing : aucun jeton npm, preuve d'origine automatique) :
+**Later releases, from CI** (`.github/workflows/release.yml`, Trusted Publishing: no npm token, provenance attached automatically):
 
-1. Sur npmjs.com, dans les réglages du paquet : ajouter GitHub Actions comme *trusted publisher* (dépôt, workflow `release.yml`, environnement `npm`), puis « Require two-factor authentication and disallow tokens ».
-2. Pour publier :
+1. On npmjs.com, in the package settings: add GitHub Actions as a *trusted publisher* (repository, workflow `release.yml`, environment `npm`), then pick "Require two-factor authentication and disallow tokens".
+2. To publish:
    ```bash
-   npm version patch          # ou minor / major : met à jour package.json et crée le tag
-   git push --follow-tags     # le tag vX.Y.Z déclenche la publication
+   npm version patch          # or minor / major: updates package.json and creates the tag
+   git push --follow-tags     # the vX.Y.Z tag triggers the release
    ```
 
-La CI (`.github/workflows/ci.yml`) vérifie types, tests et builds sur Node 22 et 24 à chaque push et pull request, plus l'audit des dépendances publiées et publint.
+CI (`.github/workflows/ci.yml`) checks types, tests and builds on Node 22 and 24 for every push and pull request, plus an audit of the published dependencies and publint.
 
-Une fois publié, le rendu des avatars est un contrat : voir Stabilité.
+Once published, the avatars' rendering is a contract: see Stability.
 
-## Licence
+## License
 
 MIT

@@ -203,7 +203,9 @@ function renderTiles() {
       const current = state[key];
       // Yeux et bouche sont minuscules à 46 px : on cadre sur le visage.
       const zoom = (svg: string) => (key === 'eyes' || key === 'mouth' ? svg.replace('viewBox="0 0 100 100"', 'viewBox="22 28 56 56"') : svg);
-      tiles.push(tile(kind, undefined, current === undefined, zoom(thumb({ [key]: undefined })), `${t('editor.auto')} · ${label(key, r[key])}`));
+      // « auto » montre ce que donnerait le nom, pas la valeur épinglée.
+      const fromName = resolve({ ...o, [key]: undefined })[key];
+      tiles.push(tile(kind, undefined, current === undefined, zoom(thumb({ [key]: undefined })), `${t('editor.auto')} · ${label(key, fromName)}`));
       for (const v of gridValues(key as Discrete)) tiles.push(tile(kind, v, current === v, zoom(thumb({ [key]: v })), label(key, v)));
     }
     grid.replaceChildren(...tiles);
