@@ -1,6 +1,6 @@
 {
   "name": "mochikao",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Deterministic avatars: any string becomes a cute, unique SVG character. Zero dependencies, React / Vue / Svelte / Solid / web component.",
   "keywords": [
     "avatar",
