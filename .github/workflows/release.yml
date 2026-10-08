@@ -1,7 +1,9 @@
 name: Release
 
-# Publie sur npm quand un tag de version est poussé :
+# Met la version en file d'attente sur npm quand un tag est poussé :
 #   npm version patch && git push --follow-tags
+# Rien n'est en ligne avant ton approbation (2FA) :
+#   npm stage list && npm stage approve <id>
 on:
   push:
     tags: ['v*']
@@ -31,5 +33,5 @@ jobs:
       - run: npm ci
       - name: Le tag correspond à la version du package
         run: test "v$(node -p 'require("./package.json").version')" = "$GITHUB_REF_NAME"
-      # prepublishOnly relance types, tests et build avant l'envoi.
-      - run: npm publish
+      # prepublishOnly relance types, tests et build avant la mise en file.
+      - run: npm stage publish
