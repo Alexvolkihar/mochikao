@@ -20,6 +20,21 @@ A face for every name. `mochikao` turns any string (username, email, ID) into a 
 
 Inspired by [blobatar](https://blobatar.dev).
 
+## When to use it
+
+- **Default avatars** for users who haven't uploaded a photo: feed it a username or an ID and every account gets a face, with nothing to store.
+- **Anonymous or pseudonymous people**: commenters, chat and multiplayer participants, guest users, reviewers. Each one is recognizable at a glance without revealing who they are.
+- **Placeholders and seed data** in lists, mockups, demos and screenshots, instead of grey circles or stock photos.
+- **Anywhere you can't or don't want to call a service**: the avatar is computed from the string alone, so it renders the same in the browser, on the server, at the edge or in a script, with no network request.
+- **A face that shows a mood**: the 8 expressions fit statuses (`thinking` while loading, `sick` on an error, `happy` on success) while the character stays the same.
+- **A playful, recognizable look** for a community, a game or a side project, where a generic identicon feels too cold.
+
+When **not** to use it:
+
+- You need a real photo or a verified identity. A mochikao is a stand-in, not proof of who someone is.
+- You need every user to be guaranteed unique. Two different names can, in theory, look alike.
+- Pick a **stable key** (an ID rather than a pseudonym a user can rename): change the string and the face changes.
+
 ## Getting started
 
 ```bash

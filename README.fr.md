@@ -20,6 +20,21 @@ Un visage pour chaque nom. `mochikao` transforme n'importe quelle chaîne (pseud
 
 Inspiré de [blobatar](https://blobatar.dev).
 
+## Quand l'utiliser
+
+- **Avatars par défaut** pour les utilisateurs sans photo : donne-lui un pseudo ou un id et chaque compte a un visage, sans rien à stocker.
+- **Personnes anonymes ou pseudonymes** : commentateurs, participants d'un chat ou d'un jeu multijoueur, invités, relecteurs. Chacun se reconnaît d'un coup d'œil sans révéler qui il est.
+- **Maquettes et données de test** dans des listes, démos et captures d'écran, à la place des ronds gris ou des photos de banque d'images.
+- **Partout où l'on ne peut pas ou ne veut pas appeler un service** : l'avatar se calcule à partir de la seule chaîne, donc il s'affiche pareil dans le navigateur, sur le serveur, en edge ou dans un script, sans requête réseau.
+- **Un visage qui montre une humeur** : les 8 expressions collent à des statuts (`thinking` pendant un chargement, `sick` sur une erreur, `happy` après un succès) sans que le personnage change.
+- **Un style ludique et reconnaissable** pour une communauté, un jeu ou un projet perso, quand un identicon générique paraît trop froid.
+
+Quand **ne pas** l'utiliser :
+
+- Il te faut une vraie photo ou une identité vérifiée. Un mochikao est un remplaçant, pas une preuve de qui est la personne.
+- Il te faut une unicité garantie pour chaque utilisateur. Deux noms différents peuvent, en théorie, se ressembler.
+- Choisis une **clé stable** (un id plutôt qu'un pseudo que l'utilisateur peut renommer) : si la chaîne change, le visage change.
+
 ## Démarrer
 
 ```bash
