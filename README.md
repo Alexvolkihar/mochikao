@@ -2,6 +2,10 @@
 
 Un visage pour chaque nom. `mochikao` transforme n'importe quelle chaîne (pseudo, e-mail, id) en un petit personnage SVG. Le même nom donne toujours le même mochikao.
 
+![Page d'accueil de mochikao : un nom tapé, l'avatar généré et le choix d'expression](docs/accueil.png)
+
+![Éditeur de mochikao en thème sombre : aperçu, autres noms avec les mêmes réglages, panneau de réglages à épingler](docs/editeur.png)
+
 - **Déterministe** : `cyrb53` → `mulberry32`, aucun appel réseau, aucun état.
 - **Zéro dépendance**, ~7 Ko min+gzip.
 - **10 formes de blobs**, et deux familles optionnelles importées à part : 6 animaux (`mochikao/animals`, +1,1 Ko) et 6 fruits & légumes (`mochikao/produce`, +1,5 Ko, avec leur teinte naturelle).
