@@ -6,7 +6,7 @@ import {
 import { morphTo } from '../src/morph.ts';
 import { parseParams, toParams } from '../src/params.ts';
 import { decorative, initChrome } from './shared/chrome.ts';
-import { EXTRA_FAMILIES, FAMILIES, type FamilyName } from './shared/families.ts';
+import { EXTRA_FAMILIES, MODES, modeLabel } from './shared/families.ts';
 import { label, onLangChange, t, type Key } from './shared/i18n.ts';
 
 type Axis = 'bodySize' | 'proportion' | 'squareness' | 'wobble' | 'eyeSize' | 'spacing' | 'lean' | 'gazeX' | 'gazeY' | 'mouthSize';
@@ -69,7 +69,7 @@ const SECTIONS: { title: Key; grid?: Discrete | 'family' | 'color'; sliders?: Sl
 
 function gridValues(grid: NonNullable<(typeof SECTIONS)[number]['grid']>): readonly string[] {
   switch (grid) {
-    case 'family': return Object.keys(FAMILIES);
+    case 'family': return Object.keys(MODES);
     case 'shape': return (state.family ?? blobs).shapes;
     case 'eyes': return EYES;
     case 'mouth': return MOUTHS;
@@ -148,7 +148,7 @@ function axisValue(id: SliderSpec['id'], r: ReturnType<typeof resolve>): number 
 
 function selectTile(grid: string, value: string | undefined) {
   if (grid === 'family') {
-    state.family = value ? FAMILIES[value as FamilyName] : undefined;
+    state.family = value ? MODES[value] : undefined;
     // Une forme épinglée d'une autre famille n'a plus de sens.
     if (state.shape && !(state.family ?? blobs).shapes.includes(state.shape)) delete state.shape;
   } else if (grid === 'color') {
@@ -193,10 +193,10 @@ function renderTiles() {
       }
     } else if (kind === 'family') {
       for (const fam of gridValues('family')) {
-        const family = FAMILIES[fam as FamilyName];
+        const family = MODES[fam]!;
         const sample = family.shapes[Math.floor(r.traits.shape * family.shapes.length)]!;
-        const selected = (state.family ?? blobs) === family;
-        tiles.push(tile(kind, fam === 'blob' ? undefined : fam, selected, thumb({ family, shape: sample }), label('family', fam)));
+        const selected = (state.family ?? blobs).name === family.name;
+        tiles.push(tile(kind, fam === 'blob' ? undefined : fam, selected, thumb({ family, shape: sample }), modeLabel(fam, label)));
       }
     } else {
       const key = kind as Discrete;
@@ -288,7 +288,17 @@ function snippet(kind: Tab): string {
   const numeric = new Set(['hue', 'tone', 'saturation']);
   // Une famille est un objet importé, pas une chaîne (sauf en HTML et dans l'URL).
   const fam = o.family && o.family !== blobs ? o.family.name : undefined;
-  const famImport = fam ? `import { ${fam} } from 'mochikao/${fam}';\n` : '';
+  // Un mode combiné (« animals+blob ») s'écrit mix(animals, blobs) en code ; la chaîne sert en HTML et dans l'URL.
+  const parts = fam ? fam.split('+') : [];
+  const ident = (p: string) => (p === 'blob' ? 'blobs' : p);
+  const famCode = parts.length > 1 ? `mix(${parts.map(ident).join(', ')})` : fam;
+  const famImport = fam
+    ? [
+        ...(parts.length > 1 ? [`import { ${['mix', ...(parts.includes('blob') ? ['blobs'] : [])].join(', ')} } from 'mochikao';\n`] : []),
+        ...parts.filter((p) => p !== 'blob').map((p) => `import { ${p} } from 'mochikao/${p}';\n`),
+      ].join('')
+    : '';
+  const families = parts.filter((p) => p !== 'blob').join(', ');
   const discrete = params.filter(([k]) => !(o.traits && k in o.traits) && k !== 'family');
   const traits = o.traits ? Object.entries(o.traits).map(([k, v]) => `${k}: ${+v!.toFixed(3)}`).join(', ') : '';
   const lines = (attrs: string[], open: string, close: string) =>
@@ -299,13 +309,13 @@ function snippet(kind: Tab): string {
   switch (kind) {
     case 'html': {
       const attrs = [`name="${name}"`, ...params.map(([k, v]) => `${k}="${v}"`)];
-      const define = fam ? `${famImport}  defineMochikao({ families: [${fam}] });` : '  defineMochikao();';
+      const define = families ? `${famImport.replace(/^import \{ (mix|blobs)[^\n]*\n/, '')}  defineMochikao({ families: [${families}] });` : '  defineMochikao();';
       return `<script type="module">\n  import { defineMochikao } from 'mochikao/element';\n${define.replace(/^import/m, '  import')}\n</script>\n\n${lines(attrs, '<mochikao-avatar', '></mochikao-avatar>')}`;
     }
     case 'react':
     case 'solid':
     case 'svelte': {
-      const attrs = [`name="${name}"`, ...(fam ? [`family={${fam}}`] : []), ...discrete.map(([k, v]) => (numeric.has(k) ? `${k}={${v}}` : `${k}="${v}"`))];
+      const attrs = [`name="${name}"`, ...(fam ? [`family={${famCode}}`] : []), ...discrete.map(([k, v]) => (numeric.has(k) ? `${k}={${v}}` : `${k}="${v}"`))];
       if (traits) attrs.push(`traits={{ ${traits} }}`);
       const head = kind === 'svelte'
         ? `<script>\n  import Mochikao from 'mochikao/svelte';\n${famImport.replace(/^/gm, '  ').trimEnd()}\n</script>`.replace('\n\n</script>', '\n</script>')
@@ -313,14 +323,16 @@ function snippet(kind: Tab): string {
       return `${head.replace(/\n\s*\n<\/script>/, '\n</script>')}\n\n${lines(attrs, '<Mochikao', '/>')}`;
     }
     case 'vue': {
-      const attrs = [`name="${name}"`, ...(fam ? [`:family="${fam}"`] : []), ...discrete.map(([k, v]) => (numeric.has(k) ? `:${k}="${v}"` : `${k}="${v}"`))];
+      const attrs = [`name="${name}"`, ...(fam ? [`:family="${famCode}"`] : []), ...discrete.map(([k, v]) => (numeric.has(k) ? `:${k}="${v}"` : `${k}="${v}"`))];
       if (traits) attrs.push(`:traits="{ ${traits} }"`);
       return `<script setup>\nimport { Mochikao } from 'mochikao/vue';\n${famImport}</script>\n\n<template>\n${lines(attrs, '<Mochikao', '/>').replace(/^/gm, '  ')}\n</template>`;
     }
     case 'js': {
-      const fields = [`name: '${name}'`, ...(fam ? [`family: ${fam}`] : []), ...discrete.map(([k, v]) => `${k}: ${numeric.has(k) ? v : `'${v}'`}`)];
+      const fields = [`name: '${name}'`, ...(fam ? [`family: ${famCode}`] : []), ...discrete.map(([k, v]) => `${k}: ${numeric.has(k) ? v : `'${v}'`}`)];
       if (traits) fields.push(`traits: { ${traits} }`);
-      return `import { mochikao } from 'mochikao';\n${famImport}\nconst svg = mochikao({\n${fields.map((f) => `  ${f},`).join('\n')}\n});`;
+      const core = famImport.match(/^import \{ (.*) \} from 'mochikao';\n/m)?.[1];
+      const imports = `import { ${['mochikao', core].filter(Boolean).join(', ')} } from 'mochikao';\n${famImport.replace(/^import \{ .* \} from 'mochikao';\n/m, '')}`;
+      return `${imports}\nconst svg = mochikao({\n${fields.map((f) => `  ${f},`).join('\n')}\n});`;
     }
     case 'url': {
       const q = new URLSearchParams(params.filter(([k]) => k !== 'animate'));

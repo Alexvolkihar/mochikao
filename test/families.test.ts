@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { animals, ANIMALS } from '../src/families/animals.ts';
 import { produce, PRODUCE } from '../src/families/produce.ts';
-import { EXPRESSIONS, EXTRAS, SHAPES, mochikao, isFamily, resolve, type ShapeFamily } from '../src/index.ts';
+import { EXPRESSIONS, EXTRAS, SHAPES, blobs, mochikao, isFamily, mix, resolve, type ShapeFamily } from '../src/index.ts';
 import { parseParams, toParams } from '../src/params.ts';
 
 describe('familles', () => {
@@ -58,5 +58,55 @@ describe('familles', () => {
     assert.equal(o.family, animals);
     assert.equal(o.shape, 'frog');
     assert.equal(toParams(o).toString(), 'family=animals&shape=frog');
+  });
+
+  describe('modes combinés', () => {
+    const seen = (family: ShapeFamily) => new Set(Array.from({ length: 600 }, (_, i) => resolve({ name: `n${i}`, family }).shape));
+
+    it('mix tire dans toutes les familles, et seulement elles', () => {
+      assert.deepEqual([...seen(mix(blobs, animals))].sort(), [...SHAPES, ...ANIMALS].sort());
+      assert.deepEqual([...seen(mix(animals, produce))].sort(), [...ANIMALS, ...PRODUCE].sort());
+      assert.deepEqual([...seen(mix(blobs, animals, produce))].sort(), [...SHAPES, ...ANIMALS, ...PRODUCE].sort());
+    });
+
+    it("l'ordre des arguments ne change rien", () => {
+      assert.equal(mix(produce, blobs, animals).name, mix(blobs, animals, produce).name);
+      assert.equal(mochikao({ name: 'alex', family: mix(produce, blobs) }), mochikao({ name: 'alex', family: mix(blobs, produce) }));
+    });
+
+    it('une seule famille se rend à elle-même', () => {
+      assert.equal(mix(animals), animals);
+      assert.equal(mix(animals, animals), animals);
+      assert.throws(() => mix());
+    });
+
+    it('chaque forme garde sa silhouette, son décor et sa teinte', () => {
+      const all = mix(blobs, animals, produce);
+      const t = { wobble: 0.4, phase: 0.2 };
+      for (const family of [blobs, animals, produce] as ShapeFamily[]) {
+        for (const shape of family.shapes) {
+          assert.equal(String(all.silhouette(shape, t).r(1)), String(family.silhouette(shape, t).r(1)), shape);
+          assert.equal(all.hue?.(shape), family.hue?.(shape), shape);
+        }
+      }
+    });
+
+    it('les yeux, la bouche et la teinte ne dépendent pas du mode', () => {
+      const a = resolve({ name: 'alex', family: animals, shape: 'cat' });
+      const b = resolve({ name: 'alex', family: mix(blobs, animals), shape: 'cat' });
+      assert.deepEqual([b.eyes, b.mouth, b.extra, b.hue], [a.eyes, a.mouth, a.extra, a.hue]);
+    });
+
+    it('par leur nom dans les paramètres : a+b, a b (« + » décodé) et all', () => {
+      const fams = [animals, produce];
+      assert.equal(parseParams('a', new URLSearchParams('family=blob+animals'), fams).family?.name, 'animals+blob');
+      assert.equal(parseParams('a', new URLSearchParams('family=animals%2Bproduce'), fams).family?.name, 'animals+produce');
+      assert.equal(parseParams('a', new URLSearchParams('family=all'), fams).family?.name, 'animals+blob+produce');
+      assert.equal(parseParams('a', new URLSearchParams('family=nope+animals'), fams).family, animals);
+      assert.equal(parseParams('a', new URLSearchParams('family=nope'), fams).family, undefined);
+      const o = parseParams('a', new URLSearchParams('family=all&shape=frog'), fams);
+      assert.equal(o.shape, 'frog');
+      assert.equal(parseParams('a', toParams(o), fams).family?.name, o.family?.name);
+    });
   });
 });

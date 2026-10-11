@@ -90,6 +90,7 @@ export const ja: Dict = {
   'family.blob': 'ブロブ',
   'family.animals': '動物',
   'family.produce': '果物・野菜',
+  'family.all': 'すべて',
   'shape.round': 'まる',
   'shape.organic': 'ゆらゆら',
   'shape.boxy': 'しかく',

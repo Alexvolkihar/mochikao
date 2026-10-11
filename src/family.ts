@@ -55,3 +55,34 @@ export function isFamily(value: unknown): value is ShapeFamily {
   return typeof f === 'object' && f !== null && typeof f.name === 'string' &&
     Array.isArray(f.shapes) && f.shapes.length > 0 && typeof f.silhouette === 'function';
 }
+
+/**
+ * Combine plusieurs familles en une : le nom choisit parmi toutes leurs formes.
+ *
+ *   mix(blobs, animals)            // blobs et animaux
+ *   mix(blobs, animals, produce)   // tout
+ *
+ * Chaque forme a la même chance d'être tirée, donc une famille pèse selon son
+ * nombre de formes. L'ordre des arguments ne compte pas : les familles sont
+ * triées par nom (le résultat s'appelle `animals+blob`), ce qui fixe la liste
+ * des formes et donc quel avatar sort pour quel nom. Si deux familles ont une
+ * forme du même nom, la première (dans l'ordre trié) l'emporte.
+ */
+export function mix(...families: ShapeFamily[]): ShapeFamily {
+  const unique = [...new Map(families.filter(isFamily).map((f) => [f.name, f])).values()]
+    .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+  if (unique.length === 0) throw new TypeError('mix() attend au moins une famille');
+  if (unique.length === 1) return unique[0]!;
+
+  const owner = new Map<string, ShapeFamily>();
+  for (const f of unique) for (const s of f.shapes) if (!owner.has(s)) owner.set(s, f);
+  const of = (shape: string) => owner.get(shape) ?? unique[0]!;
+
+  return {
+    name: unique.map((f) => f.name).join('+'),
+    shapes: [...owner.keys()],
+    silhouette: (shape, traits) => of(shape).silhouette(shape, traits),
+    decorate: (shape, body, colors, eyeY) => of(shape).decorate?.(shape, body, colors, eyeY) ?? {},
+    hue: (shape) => of(shape).hue?.(shape),
+  };
+}

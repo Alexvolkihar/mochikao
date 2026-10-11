@@ -93,6 +93,7 @@ export const fr = {
   'family.blob': 'blobs',
   'family.animals': 'animaux',
   'family.produce': 'fruits & légumes',
+  'family.all': 'tout',
   'shape.round': 'rond',
   'shape.organic': 'organique',
   'shape.boxy': 'carré',

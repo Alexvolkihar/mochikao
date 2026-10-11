@@ -15,7 +15,7 @@ const USAGE = `usage : mochikao <nom> [options]
   --tone <0-1>           luminosité
   --expression <e>       idle | happy | sad | mad | love | shy | sick | thinking
   --animate <a>          none | hover | always
-  --family <f>           blob | animals | produce
+  --family <f>           blob | animals | produce | all, ou un mélange : blob+animals, animals+produce...
   --color <c>            pastel | pale | mid | deep | bright | ink
   --shape --eyes --mouth --extra   épingle un trait
   --info                 affiche les traits au lieu du SVG`;

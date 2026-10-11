@@ -90,6 +90,7 @@ export const en: Dict = {
   'family.blob': 'blobs',
   'family.animals': 'animals',
   'family.produce': 'fruits & veggies',
+  'family.all': 'all',
   'shape.round': 'round',
   'shape.organic': 'organic',
   'shape.boxy': 'boxy',

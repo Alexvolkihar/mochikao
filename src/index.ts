@@ -12,7 +12,7 @@ import {
 
 export * from './traits.ts';
 export { blobs } from './shape.ts';
-export { isFamily } from './family.ts';
+export { isFamily, mix } from './family.ts';
 export type { Decoration, ShapeDef, ShapeFamily } from './family.ts';
 export { palette, contrast, hslToRgb } from './color.ts';
 export type { Palette } from './color.ts';

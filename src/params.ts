@@ -1,5 +1,5 @@
 import type { MochikaoOptions } from './index.ts';
-import type { ShapeFamily } from './family.ts';
+import { mix, type ShapeFamily } from './family.ts';
 import { blobs } from './shape.ts';
 import { ANIMATIONS, BACKGROUNDS, COLORS, CONTINUOUS_AXES, EXPRESSIONS, EXTRAS, EYES, MOUTHS, type Traits } from './traits.ts';
 
@@ -15,10 +15,25 @@ const num = (v: string | null | undefined, min: number, max: number): number | u
 };
 
 /**
+ * `animals`, `blob`, ou un mode combiné : `blob+animals`, `animals+produce`...
+ * `all` prend les blobs et toutes les familles fournies. Les noms inconnus
+ * sont ignorés ; sans aucun nom valide, on n'a pas de famille.
+ */
+function findFamily(value: string | null | undefined, families: readonly ShapeFamily[]): ShapeFamily | undefined {
+  if (!value) return undefined;
+  const known = [blobs, ...families];
+  if (value === 'all') return mix(...known);
+  const found = value.split(/[+ ]/).map((n) => known.find((f) => f.name === n)).filter((f) => f !== undefined);
+  return found.length ? mix(...found) : undefined;
+}
+
+/**
  * Options depuis des paramètres texte (query string, attributs HTML, flags CLI).
  * Les valeurs invalides sont ignorées plutôt que de faire échouer le rendu.
  * `families` liste les familles qu'on accepte de désigner par leur nom
  * (`?family=animals`) ; sans elles, seuls les blobs sont disponibles.
+ * Plusieurs familles se combinent avec « + » (`?family=blob+animals`), et
+ * `family=all` prend toutes celles qu'on fournit.
  */
 export function parseParams(name: string, src: Source, families: readonly ShapeFamily[] = []): MochikaoOptions {
   const options: MochikaoOptions = { name };
@@ -32,7 +47,7 @@ export function parseParams(name: string, src: Source, families: readonly ShapeF
   set('expression', oneOf(EXPRESSIONS, src.get('expression')));
   set('animate', oneOf(ANIMATIONS, src.get('animate')));
   // `family` désigne une famille par son nom, parmi celles qu'on nous a confiées.
-  const family = families.find((fam) => fam.name === src.get('family'));
+  const family = findFamily(src.get('family'), families);
   set('family', family);
   set('shape', oneOf((family ?? blobs).shapes, src.get('shape')));
   set('eyes', oneOf(EYES, src.get('eyes')));

@@ -132,6 +132,28 @@ mochikao({ name: 'alex', family: produce, shape: 'lemon' });
 
 Choisir une famille ne change que la forme : yeux, bouche, accessoire et réglages restent ceux du nom. Là où les options arrivent en texte (attributs HTML, URL, CLI), on déclare les familles disponibles une fois : `defineMochikao({ families: [animals] })` puis `<mochikao-avatar family="animals">`, ou `parseParams(nom, params, [animals, produce])`. L'API et la CLI fournies acceptent les deux.
 
+**Mélanger des familles.** `mix()` combine plusieurs familles : le nom choisit alors parmi toutes leurs formes, chacune avec la même chance.
+
+```ts
+import { mochikao, blobs, mix } from 'mochikao';
+
+mochikao({ name: 'alex', family: mix(blobs, animals) });            // blobs + animaux
+mochikao({ name: 'alex', family: mix(animals, produce) });          // animaux + fruits & légumes
+mochikao({ name: 'alex', family: mix(blobs, animals, produce) });   // tout
+```
+
+| Mode | `family=` | Formes |
+| --- | --- | --- |
+| Blobs (défaut) | `blob` | 10 |
+| Animaux | `animals` | 6 |
+| Fruits & légumes | `produce` | 6 |
+| Blobs + animaux | `animals+blob` | 16 |
+| Blobs + fruits & légumes | `blob+produce` | 16 |
+| Animaux + fruits & légumes | `animals+produce` | 12 |
+| Tout | `all` (ou `animals+blob+produce`) | 22 |
+
+Dans les URL, attributs HTML et la CLI, on joint les noms avec `+` (`?family=blob+animals`) ; `all` prend toutes les familles déclarées plus les blobs. L'ordre n'a pas d'importance, et un mélange des mêmes familles donne toujours le même avatar pour un nom.
+
 Une famille, c'est un objet `ShapeFamily` (`name`, `shapes`, `silhouette`, et en option `decorate` et `hue`) : `src/families/` montre comment en écrire une.
 
 ### Transition entre expressions
