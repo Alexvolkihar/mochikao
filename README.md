@@ -315,6 +315,14 @@ CI (`.github/workflows/ci.yml`) checks types, tests and builds on Node 22 and 24
 
 Once published, the avatars' rendering is a contract: see Stability.
 
+## Credit
+
+mochikao is MIT: you can use it freely, credit is not required. If you ship it, though, a mention helps a lot, and I'd love to see where it ends up:
+
+- **In your app**: a line in the footer or the "about" page, such as `Avatars by <a href="https://mochikao.alexvolkihar.ovh">mochikao</a>`.
+- **In your repo**: a link to <https://github.com/Alexvolkihar/mochikao> in your README (credits or acknowledgements section).
+- **Tell me**: [open an issue](https://github.com/Alexvolkihar/mochikao/issues/new) with a link to your project and I'll consider listing it.
+
 ## License
 
 MIT
