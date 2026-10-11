@@ -217,6 +217,8 @@ Partout ailleurs dans l'appli, on l'affiche pareil : `<Mochikao name={user.id} f
 - **Aperçus** : une tuile, c'est `mochikao({ name, family, ...prefs, eyes: 'wide' })`.
 - **Rester sobre** : plus on laisse épingler de traits, moins deux utilisateurs se distinguent.
 
+Le guide complet (modèle, pièges, référence sans framework, aperçus, validation côté serveur) est dans [docs/editor.fr.md](docs/editor.fr.md).
+
 ### Transition entre expressions
 
 En SVG en ligne (`animate`, `inline` ou `gaze`), changer `expression` déclenche une petite transition : les yeux clignent, la bouche se referme, le visage change pendant qu'ils sont fermés, puis tout se rouvre avec un rebond (~450 ms). Les composants et le web component le font tout seuls. Un `<img>` ne peut pas s'animer : en mode image, le changement est immédiat.

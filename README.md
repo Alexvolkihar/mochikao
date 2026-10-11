@@ -217,6 +217,8 @@ Anywhere else in your app, display it the same way: `<Mochikao name={user.id} fa
 - **Previews**: a tile is just `mochikao({ name, family, ...prefs, eyes: 'wide' })`.
 - **Keep it small**: the more traits you let people pin, the less two users differ.
 
+The full guide (model, pitfalls, a framework-free reference, previews, server-side validation) is in [docs/editor.md](docs/editor.md).
+
 ### Transitions between expressions
 
 With inline SVG (`animate`, `inline` or `gaze`), changing `expression` plays a short transition: the eyes blink, the mouth closes, the face changes while they are shut, then everything reopens with a little bounce (~450 ms). The components and the web component do it on their own. An `<img>` cannot animate: in image mode the change is immediate.
