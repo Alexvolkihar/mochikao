@@ -229,12 +229,40 @@ Prefs come from a client, so don't trust them. Reading them through `parseParams
 const safe = parseParams(user.id, new URLSearchParams(body.prefs), [animals]);
 ```
 
-## 8. Accessibility and states
+## 8. Contrast: what is guaranteed, and what is not
+
+**Guaranteed.** The eyes and mouth (the *ink*) against the body reach at least **4.5:1**, for any hue, tone, saturation, color preset or family. The palette adjusts the body's lightness until that holds, and the tests check it across the whole hue range.
+
+**Not guaranteed**, so worth a thought in your editor:
+
+- **The avatar against your page.** The body is whatever the hue and tone give. A pale body (`pastel`, `pale`) on a white page, or a dark one (`deep`, `ink`) on a dark theme, can have a weak silhouette. If the avatar is the only way to tell users apart, test it on your real backgrounds and in both themes. WCAG asks for 3:1 for graphics needed to understand content (1.4.11).
+- **`background`** (`circle`, `squircle`, `square`) draws a tinted shape behind the avatar, light when the ink is dark and dark when it is light. It helps the silhouette read on any page, but that tint is not measured against your page either.
+- **Accessories and decoration** (blush, shine, sprout, crown, hat, ears, stems) are decorative and are not measured against the body.
+- **`tone` is a target, not an exact lightness.** The body is moved as far as needed to keep the 4.5:1, so near the extremes two slider positions can give the same color. Don't promise users a precise value.
+
+**Your editor's own UI has to meet contrast too**, and it is the part most often missed:
+
+- Tile borders and focus rings need **3:1** against the page. A translucent grey border (`#8884`) often fails in dark mode; `currentColor` doesn't.
+- Show the selected tile and a pinned slider with **more than color**: a thicker border, a check mark, a "pinned" word.
+- Don't lower text opacity for secondary labels without checking the resulting ratio (4.5:1 for normal text).
+- Check the avatar thumbnails on the tile background you actually use, light and dark.
+
+## 9. Accessibility and states
 
 - Give the avatar a meaningful `title` (it becomes `aria-label`), for example the user's display name.
 - Pickers of faces are visual: label each tile with the option name, not only the picture, and keep a text `<select>` fallback like the one above.
 - `expression` is best driven by app state (`thinking` while saving, `happy` after) and kept out of prefs.
-- `animate: 'hover'` respects `prefers-reduced-motion` automatically.
+- Mark toggle tiles with `aria-pressed` and keep a visible focus style: the complete example does both.
+- `animate: 'hover'` respects `prefers-reduced-motion` automatically. `gaze` (eyes follow the pointer) is decorative: don't tie any information to it.
+
+## Examples
+
+| | What it shows | Where |
+| --- | --- | --- |
+| **Simple** | One form: shape, eyes, mouth, accessory, hue, save and reset | [README (React)](../README.md#letting-users-customize-their-avatar), section 5 (vanilla), [Vue above](#vue-3-script-setup) |
+| **Complete** | Like the site's editor: family modes, a tile per option, locked sliders for every axis, color presets, mood, background, shuffle, share link | [`examples/vue/AvatarEditor.vue`](../examples/vue/AvatarEditor.vue) |
+
+The complete one is a single Vue 3 file to copy into your project. It is not part of the npm package.
 
 ## Reference
 

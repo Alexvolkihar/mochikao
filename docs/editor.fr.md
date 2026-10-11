@@ -229,12 +229,40 @@ Les prefs viennent d'un client : ne leur fais pas confiance. Les lire avec `pars
 const safe = parseParams(user.id, new URLSearchParams(body.prefs), [animals]);
 ```
 
-## 8. Accessibilité et états
+## 8. Contraste : ce qui est garanti, et ce qui ne l'est pas
+
+**Garanti.** Les yeux et la bouche (l'*encre*) contre le corps atteignent au moins **4.5:1**, pour toute teinte, tout ton, toute saturation, tout préréglage de couleur et toute famille. La palette ajuste la luminosité du corps jusqu'à ce que ce soit vrai, et les tests le vérifient sur toute la plage de teintes.
+
+**Non garanti**, donc à garder en tête dans ton éditeur :
+
+- **L'avatar contre ta page.** Le corps est ce que donnent la teinte et le ton. Un corps pâle (`pastel`, `pale`) sur une page blanche, ou sombre (`deep`, `ink`) sur un thème sombre, peut avoir une silhouette faible. Si l'avatar est le seul moyen de distinguer les utilisateurs, teste-le sur tes vrais fonds et dans les deux thèmes. WCAG demande 3:1 pour les graphiques nécessaires à la compréhension (1.4.11).
+- **`background`** (`circle`, `squircle`, `square`) dessine une forme teintée derrière l'avatar, claire quand l'encre est sombre et sombre quand elle est claire. Cela aide la silhouette à se lire sur n'importe quelle page, mais cette teinte n'est pas non plus mesurée contre ta page.
+- **Les accessoires et la décoration** (joues, reflet, pousse, couronne, chapeau, oreilles, tiges) sont décoratifs et ne sont pas mesurés contre le corps.
+- **`tone` est une cible, pas une luminosité exacte.** Le corps est déplacé autant qu'il faut pour garder les 4.5:1 : près des extrêmes, deux positions du curseur peuvent donner la même couleur. Ne promets pas une valeur précise aux utilisateurs.
+
+**L'interface de ton éditeur doit aussi respecter le contraste**, et c'est la partie la plus souvent oubliée :
+
+- Les bordures de tuiles et les anneaux de focus ont besoin de **3:1** contre la page. Une bordure grise translucide (`#8884`) échoue souvent en thème sombre ; `currentColor` non.
+- Montre la tuile sélectionnée et un curseur épinglé par **plus que la couleur** : bordure plus épaisse, coche, mot « épinglé ».
+- N'abaisse pas l'opacité du texte secondaire sans vérifier le ratio obtenu (4.5:1 pour du texte normal).
+- Vérifie les miniatures d'avatar sur le fond de tuile que tu utilises vraiment, clair et sombre.
+
+## 9. Accessibilité et états
 
 - Donne à l'avatar un `title` parlant (il devient `aria-label`), par exemple le nom affiché de l'utilisateur.
 - Un sélecteur de visages est visuel : étiquette chaque tuile avec le nom de l'option, pas seulement l'image, et garde un `<select>` texte de secours comme celui ci-dessus.
 - `expression` se pilote mieux par l'état de l'appli (`thinking` pendant l'enregistrement, `happy` après) et reste hors des prefs.
-- `animate: 'hover'` respecte `prefers-reduced-motion` automatiquement.
+- Marque les tuiles à bascule avec `aria-pressed` et garde un style de focus visible : l'exemple complet fait les deux.
+- `animate: 'hover'` respecte `prefers-reduced-motion` automatiquement. `gaze` (les yeux suivent le pointeur) est décoratif : n'y associe aucune information.
+
+## Exemples
+
+| | Ce qu'il montre | Où |
+| --- | --- | --- |
+| **Simple** | Un formulaire : forme, yeux, bouche, accessoire, teinte, enregistrer et réinitialiser | [README (React)](../README.fr.md#laisser-les-utilisateurs-personnaliser-leur-avatar), section 5 (JS natif), [Vue ci-dessus](#vue-3-script-setup) |
+| **Complet** | Comme l'éditeur du site : modes de famille, une tuile par option, curseurs verrouillables pour chaque axe, préréglages de couleur, humeur, fond, aléatoire, lien de partage | [`examples/vue/AvatarEditor.vue`](../examples/vue/AvatarEditor.vue) |
+
+L'exemple complet est un seul fichier Vue 3 à copier dans ton projet. Il ne fait pas partie du paquet npm.
 
 ## Référence
 

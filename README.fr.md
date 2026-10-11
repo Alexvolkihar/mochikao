@@ -16,7 +16,7 @@ Un visage pour chaque nom. `mochikao` transforme n'importe quelle chaîne (pseud
 - 5 yeux, 6 bouches, 11 accessoires (joues, taches, antenne, pousse, reflet, lunettes, lunettes noires, nœud, couronne, chapeau de fête).
 - **10 axes continus** réglables (taille et proportion du corps, carrure, ondulation, taille/écart/inclinaison des yeux, regard x/y, taille de la bouche) et 6 préréglages de couleur.
 - **8 expressions** : `idle`, `happy`, `sad`, `mad`, `love`, `shy`, `sick`, `thinking`.
-- **Contraste visage/corps ≥ 4.5:1** pour toute teinte et tout ton (vérifié par les tests).
+- **Contraste visage/corps ≥ 4.5:1** pour toute teinte et tout ton (vérifié par les tests). L'avatar contre *ta* page n'est pas garanti : voir [Contraste](docs/editor.fr.md#8-contraste--ce-qui-est-garanti-et-ce-qui-ne-lest-pas).
 - **Animations CSS** (respiration, clignement, coups d'œil), **transition animée entre expressions** et **regard qui suit le pointeur**.
 - Fonction, composants **React / Vue / Svelte / Solid**, web component, API HTTP et CLI.
 
@@ -217,7 +217,7 @@ Partout ailleurs dans l'appli, on l'affiche pareil : `<Mochikao name={user.id} f
 - **Aperçus** : une tuile, c'est `mochikao({ name, family, ...prefs, eyes: 'wide' })`.
 - **Rester sobre** : plus on laisse épingler de traits, moins deux utilisateurs se distinguent.
 
-Le guide complet (modèle, pièges, référence sans framework, aperçus, validation côté serveur) est dans [docs/editor.fr.md](docs/editor.fr.md), avec aussi une version Vue 3.
+Le guide complet (modèle, pièges, référence sans framework, aperçus, validation côté serveur) est dans [docs/editor.fr.md](docs/editor.fr.md), avec aussi une version Vue 3. Un exemple Vue complet, proche de l'éditeur du site, est dans [examples/vue/AvatarEditor.vue](examples/vue/AvatarEditor.vue).
 
 ### Transition entre expressions
 

@@ -16,7 +16,7 @@ A face for every name. `mochikao` turns any string (username, email, ID) into a 
 - 5 eyes, 6 mouths, 11 accessories (blush, freckles, antenna, sprout, shine, glasses, sunglasses, bow, crown, party hat).
 - **10 continuous axes** you can tune (body size and proportion, squareness, wobble, eye size/spacing/lean, gaze x/y, mouth size) and 6 color presets.
 - **8 expressions**: `idle`, `happy`, `sad`, `mad`, `love`, `shy`, `sick`, `thinking`.
-- **Face-to-body contrast ≥ 4.5:1** for every hue and tone (checked by the tests).
+- **Face-to-body contrast ≥ 4.5:1** for every hue and tone (checked by the tests). The avatar against *your* page is not guaranteed: see [Contrast](docs/editor.md#8-contrast-what-is-guaranteed-and-what-is-not).
 - **CSS animations** (breathing, blinking, glances), **animated transitions between expressions** and **eyes that follow the pointer**.
 - A function, **React / Vue / Svelte / Solid** components, a web component, an HTTP API and a CLI.
 
@@ -217,7 +217,7 @@ Anywhere else in your app, display it the same way: `<Mochikao name={user.id} fa
 - **Previews**: a tile is just `mochikao({ name, family, ...prefs, eyes: 'wide' })`.
 - **Keep it small**: the more traits you let people pin, the less two users differ.
 
-The full guide (model, pitfalls, a framework-free reference, previews, server-side validation) is in [docs/editor.md](docs/editor.md), with a Vue 3 version as well.
+The full guide (model, pitfalls, a framework-free reference, previews, server-side validation) is in [docs/editor.md](docs/editor.md), with a Vue 3 version as well. A complete Vue example, close to the site's editor, is in [examples/vue/AvatarEditor.vue](examples/vue/AvatarEditor.vue).
 
 ### Transitions between expressions
 
