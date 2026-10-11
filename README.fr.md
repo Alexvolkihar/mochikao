@@ -2,6 +2,8 @@
 
 [English](README.md) · **Français**
 
+[Site](https://mochikao.alexvolkihar.ovh) · [npm](https://www.npmjs.com/package/mochikao) · [GitHub](https://github.com/Alexvolkihar/mochikao)
+
 Un visage pour chaque nom. `mochikao` transforme n'importe quelle chaîne (pseudo, e-mail, id) en un petit personnage SVG. Le même nom donne toujours le même mochikao.
 
 ![Page d'accueil de mochikao : un nom tapé, l'avatar généré et le choix d'expression](docs/home.png)
@@ -156,6 +158,8 @@ Mêmes attributs que les options ; `gaze` fait suivre le pointeur aux yeux.
 ```
 GET /api/<nom>.svg?size=&bg=&hue=&tone=&color=&expression=&animate=&family=&shape=&eyes=&mouth=&extra=
 ```
+
+Instance hébergée : `https://mochikao.alexvolkihar.ovh/api/<nom>.svg`. À essayer dans l'[éditeur](https://mochikao.alexvolkihar.ovh/editor.html).
 
 Réponse `image/svg+xml` avec `Cache-Control: immutable` (même entrée → même sortie). Les paramètres invalides sont ignorés. Le handler (`api/handler.ts`) est une simple fonction `(req, res)` de `node:http`, à brancher où tu veux.
 

@@ -2,6 +2,8 @@
 
 **English** · [Français](README.fr.md)
 
+[Website](https://mochikao.alexvolkihar.ovh) · [npm](https://www.npmjs.com/package/mochikao) · [GitHub](https://github.com/Alexvolkihar/mochikao)
+
 A face for every name. `mochikao` turns any string (username, email, ID) into a little SVG character. The same name always gives the same mochikao.
 
 ![mochikao home page: a typed name, the generated avatar and the expression picker](docs/home.png)
@@ -156,6 +158,8 @@ Same attributes as the options; `gaze` makes the eyes follow the pointer.
 ```
 GET /api/<name>.svg?size=&bg=&hue=&tone=&color=&expression=&animate=&family=&shape=&eyes=&mouth=&extra=
 ```
+
+Hosted instance: `https://mochikao.alexvolkihar.ovh/api/<name>.svg`. Try it in the [editor](https://mochikao.alexvolkihar.ovh/editor.html).
 
 Responds with `image/svg+xml` and `Cache-Control: immutable` (same input → same output). Invalid parameters are ignored. The handler (`api/handler.ts`) is a plain `node:http` `(req, res)` function you can mount anywhere.
 
