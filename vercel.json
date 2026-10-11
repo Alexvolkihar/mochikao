@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "npm ci",
+  "buildCommand": "npm run build:site",
+  "outputDirectory": "dist-site",
+  "rewrites": [{ "source": "/api/:name.svg", "destination": "/api/svg?_name=:name" }]
+}
