@@ -325,19 +325,33 @@ mochikao is MIT: you can use it freely, credit is not required. If you ship it, 
 
 ### Badge
 
-A small SVG badge you can drop in a README or an "about" page. Two variants, both with text above 4.5:1:
+A small SVG badge for a README or an "about" page, in a **dark** and a **light** version (text above 4.5:1 in both, and a border that holds on a white or a dark page):
 
-[![avatars by mochikao](https://mochikao.alexvolkihar.ovh/badge.svg)](https://mochikao.alexvolkihar.ovh) [![avatars by mochikao](https://mochikao.alexvolkihar.ovh/badge-light.svg)](https://mochikao.alexvolkihar.ovh)
+| Dark | Light |
+| --- | --- |
+| [![avatars by mochikao](https://mochikao.alexvolkihar.ovh/badge-dark.svg)](https://mochikao.alexvolkihar.ovh) | [![avatars by mochikao](https://mochikao.alexvolkihar.ovh/badge-light.svg)](https://mochikao.alexvolkihar.ovh) |
+| `badge-dark.svg` | `badge-light.svg` |
 
 ```md
-[![avatars by mochikao](https://mochikao.alexvolkihar.ovh/badge.svg)](https://mochikao.alexvolkihar.ovh)
+[![avatars by mochikao](https://mochikao.alexvolkihar.ovh/badge-dark.svg)](https://mochikao.alexvolkihar.ovh)
 ```
 
 ```html
-<a href="https://mochikao.alexvolkihar.ovh"><img src="https://mochikao.alexvolkihar.ovh/badge.svg" alt="avatars by mochikao" height="24"></a>
+<a href="https://mochikao.alexvolkihar.ovh"><img src="https://mochikao.alexvolkihar.ovh/badge-dark.svg" alt="avatars by mochikao" height="24"></a>
 ```
 
-Use `badge-light.svg` on a dark page or when you want a white one. The files live in [`site/public/`](site/public/) if you prefer to host a copy.
+To follow the reader's theme automatically (GitHub READMEs and any page that supports `<picture>`):
+
+```html
+<a href="https://mochikao.alexvolkihar.ovh">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://mochikao.alexvolkihar.ovh/badge-light.svg">
+    <img src="https://mochikao.alexvolkihar.ovh/badge-dark.svg" alt="avatars by mochikao" height="24">
+  </picture>
+</a>
+```
+
+`badge.svg` is kept as an alias of the dark one. The files live in [`site/public/`](site/public/) if you prefer to host a copy.
 
 ## License
 

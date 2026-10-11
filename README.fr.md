@@ -325,19 +325,33 @@ mochikao est sous licence MIT : tu l'utilises librement, la mention n'est pas ob
 
 ### Badge
 
-Un petit badge SVG à poser dans un README ou une page « à propos ». Deux variantes, avec un texte au-dessus de 4.5:1 :
+Un petit badge SVG pour un README ou une page « à propos », en version **sombre** et **claire** (texte au-dessus de 4.5:1 dans les deux, et une bordure qui tient sur une page blanche ou sombre) :
 
-[![avatars by mochikao](https://mochikao.alexvolkihar.ovh/badge.svg)](https://mochikao.alexvolkihar.ovh) [![avatars by mochikao](https://mochikao.alexvolkihar.ovh/badge-light.svg)](https://mochikao.alexvolkihar.ovh)
+| Sombre | Clair |
+| --- | --- |
+| [![avatars by mochikao](https://mochikao.alexvolkihar.ovh/badge-dark.svg)](https://mochikao.alexvolkihar.ovh) | [![avatars by mochikao](https://mochikao.alexvolkihar.ovh/badge-light.svg)](https://mochikao.alexvolkihar.ovh) |
+| `badge-dark.svg` | `badge-light.svg` |
 
 ```md
-[![avatars by mochikao](https://mochikao.alexvolkihar.ovh/badge.svg)](https://mochikao.alexvolkihar.ovh)
+[![avatars by mochikao](https://mochikao.alexvolkihar.ovh/badge-dark.svg)](https://mochikao.alexvolkihar.ovh)
 ```
 
 ```html
-<a href="https://mochikao.alexvolkihar.ovh"><img src="https://mochikao.alexvolkihar.ovh/badge.svg" alt="avatars by mochikao" height="24"></a>
+<a href="https://mochikao.alexvolkihar.ovh"><img src="https://mochikao.alexvolkihar.ovh/badge-dark.svg" alt="avatars by mochikao" height="24"></a>
 ```
 
-Prends `badge-light.svg` sur une page sombre ou pour un badge blanc. Les fichiers sont dans [`site/public/`](site/public/) si tu préfères en héberger une copie.
+Pour suivre automatiquement le thème du lecteur (README GitHub et toute page qui gère `<picture>`) :
+
+```html
+<a href="https://mochikao.alexvolkihar.ovh">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://mochikao.alexvolkihar.ovh/badge-light.svg">
+    <img src="https://mochikao.alexvolkihar.ovh/badge-dark.svg" alt="avatars by mochikao" height="24">
+  </picture>
+</a>
+```
+
+`badge.svg` reste un alias de la version sombre. Les fichiers sont dans [`site/public/`](site/public/) si tu préfères en héberger une copie.
 
 ## Licence
 
