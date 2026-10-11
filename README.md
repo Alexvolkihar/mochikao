@@ -217,7 +217,7 @@ Anywhere else in your app, display it the same way: `<Mochikao name={user.id} fa
 - **Previews**: a tile is just `mochikao({ name, family, ...prefs, eyes: 'wide' })`.
 - **Keep it small**: the more traits you let people pin, the less two users differ.
 
-The full guide (model, pitfalls, a framework-free reference, previews, server-side validation) is in [docs/editor.md](docs/editor.md).
+The full guide (model, pitfalls, a framework-free reference, previews, server-side validation) is in [docs/editor.md](docs/editor.md), with a Vue 3 version as well.
 
 ### Transitions between expressions
 

@@ -217,7 +217,7 @@ Partout ailleurs dans l'appli, on l'affiche pareil : `<Mochikao name={user.id} f
 - **Aperçus** : une tuile, c'est `mochikao({ name, family, ...prefs, eyes: 'wide' })`.
 - **Rester sobre** : plus on laisse épingler de traits, moins deux utilisateurs se distinguent.
 
-Le guide complet (modèle, pièges, référence sans framework, aperçus, validation côté serveur) est dans [docs/editor.fr.md](docs/editor.fr.md).
+Le guide complet (modèle, pièges, référence sans framework, aperçus, validation côté serveur) est dans [docs/editor.fr.md](docs/editor.fr.md), avec aussi une version Vue 3.
 
 ### Transition entre expressions
 

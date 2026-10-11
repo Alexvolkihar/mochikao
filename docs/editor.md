@@ -139,6 +139,77 @@ export function render(root: HTMLElement, id: string, prefs: Prefs, onChange: (n
 
 `serialize` and `load` round-trip through the same `toParams` / `parseParams` pair as the HTTP API, so a stored string can be appended to `/api/<id>.svg?` to get the same avatar anywhere.
 
+### Vue 3 (`<script setup>`)
+
+The same model as a single-file component: `prefs` is a `v-model`, and the form emits a new object on each change. It uses `mochikao/vue` for the avatar.
+
+```vue
+<!-- AvatarEditor.vue -->
+<script setup lang="ts">
+import { computed } from 'vue';
+import { Mochikao } from 'mochikao/vue';
+import { EYES, MOUTHS, EXTRAS, resolve, mix, blobs, type MochikaoOptions } from 'mochikao';
+import { animals } from 'mochikao/animals';
+
+type Prefs = Omit<MochikaoOptions, 'name' | 'family'>;
+
+const family = mix(blobs, animals);
+const CHOICES = { shape: family.shapes, eyes: EYES, mouth: MOUTHS, extra: EXTRAS } as const;
+type Key = keyof typeof CHOICES;
+const KEYS = Object.keys(CHOICES) as Key[];
+
+const props = defineProps<{ userId: string; modelValue: Prefs }>();
+const emit = defineEmits<{ 'update:modelValue': [prefs: Prefs]; save: [prefs: Prefs] }>();
+
+const auto = computed(() => resolve({ name: props.userId, family, ...props.modelValue }));
+
+function pin(key: Key, value: string) {
+  const { [key]: _removed, ...rest } = props.modelValue;
+  emit('update:modelValue', value ? { ...rest, [key]: value } : rest);
+}
+
+function setHue(hue: number) {
+  emit('update:modelValue', { ...props.modelValue, hue });
+}
+</script>
+
+<template>
+  <Mochikao :name="userId" :family="family" :size="128" v-bind="modelValue" />
+
+  <label v-for="key in KEYS" :key="key">
+    {{ key }}
+    <select :value="modelValue[key] ?? ''" @change="pin(key, ($event.target as HTMLSelectElement).value)">
+      <option value="">auto ({{ auto[key] }})</option>
+      <option v-for="v in CHOICES[key]" :key="v">{{ v }}</option>
+    </select>
+  </label>
+
+  <label>
+    hue
+    <input type="range" min="0" max="360" :value="modelValue.hue ?? auto.hue"
+           @input="setHue(+($event.target as HTMLInputElement).value)" />
+  </label>
+
+  <button @click="emit('save', modelValue)">Save</button>
+  <button @click="emit('update:modelValue', {})">Reset</button>
+</template>
+```
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue';
+import AvatarEditor from './AvatarEditor.vue';
+
+const prefs = ref(user.avatarPrefs);              // from your API
+</script>
+
+<template>
+  <AvatarEditor :user-id="user.id" v-model="prefs" @save="api.saveAvatar" />
+</template>
+```
+
+Anywhere else, display it with the same two lines: `family` from your theme, then `v-bind="user.avatarPrefs"`.
+
 ## 6. Previews
 
 A tile in a picker is the same avatar with one option changed:
