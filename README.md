@@ -323,6 +323,22 @@ mochikao is MIT: you can use it freely, credit is not required. If you ship it, 
 - **In your repo**: a link to <https://github.com/Alexvolkihar/mochikao> in your README (credits or acknowledgements section).
 - **Tell me**: [open an issue](https://github.com/Alexvolkihar/mochikao/issues/new) with a link to your project and I'll consider listing it.
 
+### Badge
+
+A small SVG badge you can drop in a README or an "about" page. Two variants, both with text above 4.5:1:
+
+[![avatars by mochikao](https://mochikao.alexvolkihar.ovh/badge.svg)](https://mochikao.alexvolkihar.ovh) [![avatars by mochikao](https://mochikao.alexvolkihar.ovh/badge-light.svg)](https://mochikao.alexvolkihar.ovh)
+
+```md
+[![avatars by mochikao](https://mochikao.alexvolkihar.ovh/badge.svg)](https://mochikao.alexvolkihar.ovh)
+```
+
+```html
+<a href="https://mochikao.alexvolkihar.ovh"><img src="https://mochikao.alexvolkihar.ovh/badge.svg" alt="avatars by mochikao" height="24"></a>
+```
+
+Use `badge-light.svg` on a dark page or when you want a white one. The files live in [`site/public/`](site/public/) if you prefer to host a copy.
+
 ## License
 
 MIT
