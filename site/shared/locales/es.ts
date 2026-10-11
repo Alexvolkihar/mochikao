@@ -7,6 +7,7 @@ export const es: Dict = {
   'nav.editor': 'Editor',
   'nav.gallery': 'Galería',
   'nav.code': 'Código',
+  'nav.stars': 'estrellas',
   'nav.homeAria': 'mochikao, inicio',
   'prefs.language': 'Idioma',
   'theme.system': 'Tema del sistema',

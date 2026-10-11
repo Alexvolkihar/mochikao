@@ -7,6 +7,7 @@ export const en: Dict = {
   'nav.editor': 'Editor',
   'nav.gallery': 'Gallery',
   'nav.code': 'Code',
+  'nav.stars': 'stars',
   'nav.homeAria': 'mochikao, home',
   'prefs.language': 'Language',
   'theme.system': 'System theme',

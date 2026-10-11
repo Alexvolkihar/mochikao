@@ -6,6 +6,7 @@ export const fr = {
   'nav.editor': 'Éditeur',
   'nav.gallery': 'Galerie',
   'nav.code': 'Code',
+  'nav.stars': 'étoiles',
   'nav.homeAria': 'mochikao, accueil',
   'prefs.language': 'Langue',
   'theme.system': 'Thème du système',
