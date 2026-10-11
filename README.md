@@ -156,6 +156,67 @@ In URLs, HTML attributes and the CLI, join names with `+` (`?family=blob+animals
 
 A family is a `ShapeFamily` object (`name`, `shapes`, `silhouette`, and optionally `decorate` and `hue`): `src/families/` shows how to write one.
 
+### Letting users customize their avatar
+
+mochikao has no built-in picker: an avatar is `name + pinned options`, so your app stores what the user touched and passes it back. Store only the pinned keys; removing a key puts that trait back on "auto" (drawn from the name).
+
+```tsx
+import { useState } from 'react';
+import { Mochikao } from 'mochikao/react';
+import { EYES, MOUTHS, EXTRAS, resolve, mix, blobs, type MochikaoOptions } from 'mochikao';
+import { animals } from 'mochikao/animals';
+
+const family = mix(blobs, animals);               // the shapes you offer
+type Prefs = Omit<MochikaoOptions, 'name' | 'family'>;
+
+const CHOICES = { shape: family.shapes, eyes: EYES, mouth: MOUTHS, extra: EXTRAS } as const;
+
+export function AvatarEditor({ userId, saved, onSave }: {
+  userId: string;                                  // a stable ID, not a renamable pseudonym
+  saved: Prefs;                                    // loaded from your database
+  onSave: (prefs: Prefs) => void;
+}) {
+  const [prefs, setPrefs] = useState<Prefs>(saved);
+  const auto = resolve({ name: userId, family });  // what the name gives when nothing is pinned
+
+  // value === undefined puts the trait back to "auto"
+  const pin = (key: keyof typeof CHOICES, value?: string) =>
+    setPrefs(({ [key]: _, ...rest }) => (value ? { ...rest, [key]: value } : rest));
+
+  return (
+    <div>
+      <Mochikao name={userId} family={family} size={128} {...prefs} />
+
+      {(Object.keys(CHOICES) as (keyof typeof CHOICES)[]).map((key) => (
+        <label key={key}>
+          {key}
+          <select value={prefs[key] ?? ''} onChange={(e) => pin(key, e.target.value || undefined)}>
+            <option value="">auto ({auto[key]})</option>
+            {CHOICES[key].map((v) => <option key={v}>{v}</option>)}
+          </select>
+        </label>
+      ))}
+
+      <label>
+        hue
+        <input type="range" min={0} max={360} value={prefs.hue ?? auto.hue}
+               onChange={(e) => setPrefs({ ...prefs, hue: +e.target.value })} />
+      </label>
+
+      <button onClick={() => onSave(prefs)}>Save</button>
+      <button onClick={() => setPrefs({})}>Reset</button>
+    </div>
+  );
+}
+```
+
+Anywhere else in your app, display it the same way: `<Mochikao name={user.id} family={family} {...user.avatarPrefs} />`.
+
+- **Store text**: `toParams(prefs).toString()` gives a compact string (`shape=frog&eyes=sleepy&hue=140`) and `parseParams(userId, new URLSearchParams(str), [animals])` reads it back. Invalid values are ignored, which makes it the right way to validate what comes from the client.
+- **Same avatar elsewhere**: build `/api/<id>.svg?family=animals+blob&<prefs>` for emails, OG images or non-JS clients.
+- **Previews**: a tile is just `mochikao({ name, family, ...prefs, eyes: 'wide' })`.
+- **Keep it small**: the more traits you let people pin, the less two users differ.
+
 ### Transitions between expressions
 
 With inline SVG (`animate`, `inline` or `gaze`), changing `expression` plays a short transition: the eyes blink, the mouth closes, the face changes while they are shut, then everything reopens with a little bounce (~450 ms). The components and the web component do it on their own. An `<img>` cannot animate: in image mode the change is immediate.

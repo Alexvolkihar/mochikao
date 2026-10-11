@@ -156,6 +156,67 @@ Dans les URL, attributs HTML et la CLI, on joint les noms avec `+` (`?family=blo
 
 Une famille, c'est un objet `ShapeFamily` (`name`, `shapes`, `silhouette`, et en option `decorate` et `hue`) : `src/families/` montre comment en écrire une.
 
+### Laisser les utilisateurs personnaliser leur avatar
+
+mochikao n'embarque pas de sélecteur : un avatar, c'est `nom + options épinglées`. Ton appli enregistre ce que l'utilisateur a touché et le repasse. Ne stocke que les clés épinglées ; supprimer une clé remet ce trait en « auto » (tiré du nom).
+
+```tsx
+import { useState } from 'react';
+import { Mochikao } from 'mochikao/react';
+import { EYES, MOUTHS, EXTRAS, resolve, mix, blobs, type MochikaoOptions } from 'mochikao';
+import { animals } from 'mochikao/animals';
+
+const family = mix(blobs, animals);               // les formes que tu proposes
+type Prefs = Omit<MochikaoOptions, 'name' | 'family'>;
+
+const CHOICES = { shape: family.shapes, eyes: EYES, mouth: MOUTHS, extra: EXTRAS } as const;
+
+export function AvatarEditor({ userId, saved, onSave }: {
+  userId: string;                                  // un id stable, pas un pseudo modifiable
+  saved: Prefs;                                    // lu en base
+  onSave: (prefs: Prefs) => void;
+}) {
+  const [prefs, setPrefs] = useState<Prefs>(saved);
+  const auto = resolve({ name: userId, family });  // ce que donne le nom quand rien n'est épinglé
+
+  // value === undefined remet le trait en « auto »
+  const pin = (key: keyof typeof CHOICES, value?: string) =>
+    setPrefs(({ [key]: _, ...rest }) => (value ? { ...rest, [key]: value } : rest));
+
+  return (
+    <div>
+      <Mochikao name={userId} family={family} size={128} {...prefs} />
+
+      {(Object.keys(CHOICES) as (keyof typeof CHOICES)[]).map((key) => (
+        <label key={key}>
+          {key}
+          <select value={prefs[key] ?? ''} onChange={(e) => pin(key, e.target.value || undefined)}>
+            <option value="">auto ({auto[key]})</option>
+            {CHOICES[key].map((v) => <option key={v}>{v}</option>)}
+          </select>
+        </label>
+      ))}
+
+      <label>
+        teinte
+        <input type="range" min={0} max={360} value={prefs.hue ?? auto.hue}
+               onChange={(e) => setPrefs({ ...prefs, hue: +e.target.value })} />
+      </label>
+
+      <button onClick={() => onSave(prefs)}>Enregistrer</button>
+      <button onClick={() => setPrefs({})}>Réinitialiser</button>
+    </div>
+  );
+}
+```
+
+Partout ailleurs dans l'appli, on l'affiche pareil : `<Mochikao name={user.id} family={family} {...user.avatarPrefs} />`.
+
+- **Stocker du texte** : `toParams(prefs).toString()` donne une chaîne compacte (`shape=frog&eyes=sleepy&hue=140`) et `parseParams(userId, new URLSearchParams(str), [animals])` la relit. Les valeurs invalides sont ignorées : c'est la bonne façon de valider ce qui vient du client.
+- **Même avatar ailleurs** : construis `/api/<id>.svg?family=animals+blob&<prefs>` pour les e-mails, les images OG ou les clients sans JS.
+- **Aperçus** : une tuile, c'est `mochikao({ name, family, ...prefs, eyes: 'wide' })`.
+- **Rester sobre** : plus on laisse épingler de traits, moins deux utilisateurs se distinguent.
+
 ### Transition entre expressions
 
 En SVG en ligne (`animate`, `inline` ou `gaze`), changer `expression` déclenche une petite transition : les yeux clignent, la bouche se referme, le visage change pendant qu'ils sont fermés, puis tout se rouvre avec un rebond (~450 ms). Les composants et le web component le font tout seuls. Un `<img>` ne peut pas s'animer : en mode image, le changement est immédiat.
