@@ -7,6 +7,8 @@ export const fr = {
   'nav.gallery': 'Galerie',
   'nav.code': 'Code',
   'nav.stars': 'étoiles',
+  'nav.perWeek': '/sem',
+  'nav.downloads': 'téléchargements par semaine',
   'nav.homeAria': 'mochikao, accueil',
   'prefs.language': 'Langue',
   'theme.system': 'Thème du système',

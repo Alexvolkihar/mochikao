@@ -8,6 +8,8 @@ export const ja: Dict = {
   'nav.gallery': 'ギャラリー',
   'nav.code': 'コード',
   'nav.stars': 'スター',
+  'nav.perWeek': '/週',
+  'nav.downloads': '週間ダウンロード数',
   'nav.homeAria': 'mochikao、ホーム',
   'prefs.language': '言語',
   'theme.system': 'システムのテーマ',

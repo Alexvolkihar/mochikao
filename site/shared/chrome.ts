@@ -7,7 +7,7 @@ import { themeSwitcher } from './theme.ts';
 export async function initChrome() {
   defineMochikao({ families: EXTRA_FAMILIES });
   await initI18n();
-  void showStars(); // sans attendre : le réseau ne bloque pas le premier rendu
+  showCounts();
   const prefs = document.getElementById('prefs');
   if (!prefs) return;
   const mountTheme = () => themeSwitcher({ system: t('theme.system'), light: t('theme.light'), dark: t('theme.dark') });
@@ -24,28 +24,36 @@ export async function initChrome() {
 export const decorative = (svg: string) => svg.replace('<svg ', '<svg aria-hidden="true" ');
 
 const REPO = 'Alexvolkihar/mochikao';
-const STARS_TTL = 60 * 60 * 1000;
+const PACKAGE = 'mochikao';
+const TTL = 60 * 60 * 1000;
 
-/** Nombre d'étoiles GitHub dans la barre de navigation. Silencieux si l'API ne répond pas. */
-async function showStars() {
-  const box = document.getElementById('stars');
-  const out = document.getElementById('stars-n');
+/** Affiche un compteur dans la barre de navigation. Silencieux si l'API ne répond pas. */
+async function showCount(ids: { box: string; out: string }, cacheKey: string, url: string, read: (json: unknown) => unknown) {
+  const box = document.getElementById(ids.box);
+  const out = document.getElementById(ids.out);
   if (!box || !out) return;
   const show = (n: number) => {
     out.textContent = new Intl.NumberFormat(document.documentElement.lang || undefined, { notation: 'compact' }).format(n);
     box.hidden = false;
   };
-  const key = `mochikao:stars:${REPO}`;
   try {
-    const cached = JSON.parse(sessionStorage.getItem(key) ?? 'null') as { n: number; at: number } | null;
-    if (cached && Date.now() - cached.at < STARS_TTL) return show(cached.n);
+    const cached = JSON.parse(sessionStorage.getItem(cacheKey) ?? 'null') as { n: number; at: number } | null;
+    if (cached && Date.now() - cached.at < TTL) return show(cached.n);
   } catch { /* stockage indisponible : on interroge l'API */ }
   try {
-    const res = await fetch(`https://api.github.com/repos/${REPO}`, { headers: { accept: 'application/vnd.github+json' } });
+    const res = await fetch(url, { headers: { accept: 'application/json' } });
     if (!res.ok) return;
-    const n = (await res.json() as { stargazers_count?: unknown }).stargazers_count;
-    if (typeof n !== 'number') return;
+    const n = read(await res.json());
+    if (typeof n !== 'number' || !Number.isFinite(n)) return;
     show(n);
-    try { sessionStorage.setItem(key, JSON.stringify({ n, at: Date.now() })); } catch { /* ignoré */ }
+    try { sessionStorage.setItem(cacheKey, JSON.stringify({ n, at: Date.now() })); } catch { /* ignoré */ }
   } catch { /* hors ligne ou limite d'appels : le lien reste, sans le nombre */ }
+}
+
+/** Étoiles GitHub et téléchargements npm de la semaine, sans bloquer le premier rendu. */
+function showCounts() {
+  void showCount({ box: 'stars', out: 'stars-n' }, `mochikao:stars:${REPO}`, `https://api.github.com/repos/${REPO}`,
+    (j) => (j as { stargazers_count?: unknown }).stargazers_count);
+  void showCount({ box: 'downloads', out: 'downloads-n' }, `mochikao:downloads:${PACKAGE}`, `https://api.npmjs.org/downloads/point/last-week/${PACKAGE}`,
+    (j) => (j as { downloads?: unknown }).downloads);
 }

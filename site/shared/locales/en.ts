@@ -8,6 +8,8 @@ export const en: Dict = {
   'nav.gallery': 'Gallery',
   'nav.code': 'Code',
   'nav.stars': 'stars',
+  'nav.perWeek': '/wk',
+  'nav.downloads': 'downloads per week',
   'nav.homeAria': 'mochikao, home',
   'prefs.language': 'Language',
   'theme.system': 'System theme',
